@@ -20,11 +20,12 @@ defmodule FogChess.HttpRouter do
   end
 
   get "/stream" do
-    conn = Plug.Conn.put_resp_content_type(conn, "text/event-stream")
-    conn = Plug.Conn.put_resp_header(conn, "connection", "keep-alive")
-    conn = Plug.Conn.put_resp_header(conn, "cache-control", "no-cache")
-    conn = Plug.Conn.send_chunked(conn, 200)
-    stream_loop(conn, 0)
+    conn
+    |> put_resp_content_type("text/event-stream")
+    |> put_resp_header("connection", "keep-alive")
+    |> put_resp_header("cache-control", "no-cache")
+    |> send_chunked(200)
+    |> stream_loop(0)
   end
 
   defp stream_loop(conn, it) do
