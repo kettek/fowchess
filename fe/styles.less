@@ -1,0 +1,40 @@
+.Board {
+  @whiteTileBackground: #fff;
+  @blackTileBackground: #000;
+  @borderColor: #777;
+  @cellSize: 4ch;
+
+  tr {
+    td {
+      border: 1px solid @borderColor;
+      width: @cellSize;
+      height: @cellSize;
+      text-align: center;
+    }
+    td:nth-child(even) {
+      background: @whiteTileBackground;
+    }
+    td:nth-child(odd) {
+      background: @blackTileBackground;
+    }
+  }
+  tr:nth-child(odd) {
+    td:nth-child(odd) {
+      background: @whiteTileBackground;
+    }
+    td:nth-child(even) {
+      background: @blackTileBackground;
+    }
+  }
+}
+
+.Piece {
+  display: inline-block;
+  background: blue;
+  width: 1ch;
+  height: 1ch;
+}
+.Queen {
+  .Piece();
+  border: 1px solid red;
+}

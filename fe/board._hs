@@ -1,0 +1,47 @@
+behavior Board(width, height)
+  init
+    add .Board
+    make <table.board/> called table
+    repeat height times
+      make <tr/> called row
+      repeat width times
+        make <td/> called cell
+        set cell's @script to 'install Cell'
+
+        -- TEMP
+        if table's children's length is 3 and row's children's length is 3
+          make <div.Piece.Queen/> called piece
+          set piece's @script to 'install Piece'
+          put piece at the end of cell
+        end
+
+        put cell at the end of row
+      end
+      put row at the end of table
+    end
+    put table into me
+  end
+end
+
+behavior Piece
+end
+
+behavior Cell
+  on pointerdown(clientX, clientY)
+    halt the event
+    set piece to the first <div.Piece/> in me
+    if piece then
+      trigger draggable:start
+      measure my x, y
+      set xoffset to clientX - x
+      set yoffset to clientY - y
+      repeat until event pointerup from document
+        wait for pointermove(pageX, pageY) or pointerup (pageX, pageY) from document
+        log `TODO: Move by:  ${pageX - xoffset} x ${pageY - yoffset}`
+        log piece
+        trigger draggable:move
+      end
+      trigger draggable:end
+    end
+  end
+end

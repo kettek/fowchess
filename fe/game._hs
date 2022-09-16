@@ -1,0 +1,20 @@
+behavior Game()
+  on mutation of @game_id
+    -- TODO: Issue fetch for game?
+    log "TODO: Some sort of game API fetch"
+  end
+end
+
+def game.create()
+  set #game's @game_id to "some game"
+end
+
+def game.join(id)
+  -- TODO
+  log "join " + id
+end
+
+def game.leave()
+  -- TODO
+  log "leave"
+end
