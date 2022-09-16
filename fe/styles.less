@@ -1,21 +1,31 @@
-.Board {
-  @whiteTileBackground: #fff;
-  @blackTileBackground: #000;
-  @borderColor: #777;
-  @cellSize: 4ch;
+@whiteTileBackground: #fff;
+@blackTileBackground: #000;
+@borderColor: #777;
+@cellSize: 4rem;
 
+* {
+  user-select: none;
+}
+
+.Board {
   tr {
     td {
       border: 1px solid @borderColor;
       width: @cellSize;
       height: @cellSize;
       text-align: center;
+      font-size: @cellSize;
+      position: relative;
+      line-height: 1.2em;
     }
     td:nth-child(even) {
       background: @whiteTileBackground;
     }
     td:nth-child(odd) {
       background: @blackTileBackground;
+    }
+    td.targetTile {
+      border: 1px dashed red;
     }
   }
   tr:nth-child(odd) {
@@ -30,11 +40,66 @@
 
 .Piece {
   display: inline-block;
-  background: blue;
-  width: 1ch;
-  height: 1ch;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.Piece::after {
+  position: relative;
+  left: 0;
+  top: 0;
 }
 .Queen {
   .Piece();
-  border: 1px solid red;
+}
+.Queen.black::after {
+  content: '♛';
+}
+.Queen.white::after {
+  content: '♕';
+}
+.King {
+  .Piece();
+}
+.King.black::after {
+  content: '♚';
+}
+.King.white::after {
+  content: '♔';
+}
+.Bishop {
+  .Piece();
+}
+.Bishop.black::after {
+  content: '♝';
+}
+.Bishop.white::after {
+  content: '♗';
+}
+.Knight {
+  .Piece();
+}
+.Knight.black::after {
+  content: '♞';
+}
+.Knight.white::after {
+  content: '♘';
+}
+.Rook {
+  .Piece();
+}
+.Rook.black::after {
+  content: '♜';
+}
+.Rook.white::after {
+  content: '♖';
+}
+.Pawn {
+  .Piece();
+}
+.Pawn.black::after {
+  content: '♟';
+}
+.Pawn.white::after {
+  content: '♙';
 }
