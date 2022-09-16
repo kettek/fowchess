@@ -1,5 +1,21 @@
+eventsource GameUpdates
+  on message as json
+    log it
+  end
+
+  on open
+    log "opened stream"
+  end
+
+  on exit
+    log "got exit"
+    GameUpdates.close()
+  end
+end
+
 behavior Game()
   on mutation of @game_id
+    GameUpdates.open('http://localhost:4000/stream')
     -- TODO: Issue fetch for game?
     log "TODO: Some sort of game API fetch"
   end

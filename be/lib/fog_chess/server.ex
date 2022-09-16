@@ -1,4 +1,5 @@
 defmodule FogChess.HttpRouter do
+  require Logger
   use Plug.Router
 
   # Debug because I don't know what I'm doing.
@@ -16,6 +17,32 @@ defmodule FogChess.HttpRouter do
   # Send the index if the root is requested.
   get "/" do
     send_file(conn, 200, "../fe/index.html")
+  end
+
+  get "/stream" do
+    conn = Plug.Conn.put_resp_content_type(conn, "text/event-stream")
+    conn = Plug.Conn.put_resp_header(conn, "connection", "keep-alive")
+    conn = Plug.Conn.put_resp_header(conn, "cache-control", "no-cache")
+    conn = Plug.Conn.send_chunked(conn, 200)
+    stream_loop(conn, 0)
+  end
+
+  defp stream_loop(conn, it) do
+    case it do
+      5 ->
+        payload = Jason.encode!(%{"msg" => "bye bye on message #{it}"})
+        Plug.Conn.chunk(conn, "id: #{it}\nevent: exit\ndata: #{payload}}\n\n")
+        conn
+      _ ->
+        receive do
+          {:move} ->
+            stream_loop(conn, it+1)
+          after 1_000 ->
+            payload = Jason.encode!(%{"msg" => "this is message ##{it}"})
+            Plug.Conn.chunk(conn, "id: #{it}\ndata: #{payload}\n\n")
+            stream_loop(conn, it+1)
+          end
+    end
   end
 
   # 404s, of course
