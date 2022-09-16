@@ -7,6 +7,8 @@ behavior Board(width, height)
       repeat width times
         make <td/> called cell
         set cell's @script to 'install Cell'
+        set cell's @x to row's children's length
+        set cell's @y to table's children's length
 
         -- TEMP
         if table's children's length is 3 and row's children's length is 3
@@ -33,6 +35,7 @@ behavior Cell
     if piece then
       set event.dataTransfer.effectAllowed to 'move'
       call event.dataTransfer.setDragImage(me, 0, 0)
+      call event.dataTransfer.setData('from', my @x + 'x' + my @y)
       -- TODO: We could target all <td/>s, then check if each would be a valid location, and if so, set '.valid', otherwise '.invalid'. These would then be cleared on dragend.
     end
   end
@@ -47,5 +50,9 @@ behavior Cell
   end
   on dragleave or drop
     remove .targetTile
+  end
+  on drop
+    log `move from ${event.dataTransfer.getData('from')} to ${my @x} x ${my @y}`
+    -- TODO: Send move request.
   end
 end
