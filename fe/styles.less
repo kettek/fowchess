@@ -1,5 +1,6 @@
 @whiteTileBackground: #fff;
 @blackTileBackground: #000;
+@pieceStrokeColor: #fff;
 @borderColor: #777;
 @cellSize: 4rem;
 
@@ -14,6 +15,7 @@
       width: @cellSize;
       height: @cellSize;
       text-align: center;
+      text-shadow: -2px -2px 0 @pieceStrokeColor,  2px -2px 0 @pieceStrokeColor, -2px 2px 0 @pieceStrokeColor, 2px 2px 0 @pieceStrokeColor;
       font-size: @cellSize;
       position: relative;
       line-height: 1.2em;
