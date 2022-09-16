@@ -39,7 +39,7 @@ behavior Cell
     set piece to the first <div.Piece/> in me
     if piece then
       set event.dataTransfer.effectAllowed to 'move'
-      call event.dataTransfer.setDragImage(me, 0, 0)
+      call event.dataTransfer.setDragImage(piece, 0, 0)
       call event.dataTransfer.setData('from', my id)
       -- TODO: We could target all <td/>s, then check if each would be a valid location, and if so, set '.valid', otherwise '.invalid'. These would then be cleared on dragend.
     end
