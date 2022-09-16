@@ -19,6 +19,10 @@ defmodule FogChess.HttpRouter do
     send_file(conn, 200, "../fe/index.html")
   end
 
+  get "/game/:id" do
+    send_resp(conn, 200, "TODO: query for game, make it if it doesn't, then send game info along with a session key for the client")
+  end
+
   get "/stream" do
     conn
     |> put_resp_content_type("text/event-stream")
@@ -37,6 +41,8 @@ defmodule FogChess.HttpRouter do
       _ ->
         receive do
           {:move} ->
+            payload = Jason.encode!(%{"msg" => "secret message from beyond"})
+            Plug.Conn.chunk(conn, "id: #{it}\ndata: #{payload}\n\n")
             stream_loop(conn, it+1)
           after 1_000 ->
             payload = Jason.encode!(%{"msg" => "this is message ##{it}"})
