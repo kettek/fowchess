@@ -20,12 +20,26 @@ behavior CreateDialog()
         <span>name</span>
         <input id='playerName' name='playerName'/>
       </label>
+      <label>
+        <span>black</span>
+        <input type='radio' name='playerColor' value='black' checked/>
+      </label>
+      <label>
+        <span>white</span>
+        <input type='radio' name='playerColor' value='white'/>
+      </label>
     ` into section
 
     -- footer
     make <button.Submit/> called submitButton
     put 'create' into submitButton
-    set submitButton's @script to `on click game.create({name: #playerName's value}) remove #${dialogId}`
+    set submitButton's @script to `
+      on click
+        set color to the first <input[checked][name=playerColor]/>
+        game.create({name: #playerName's value, color: color.value})
+        remove #${dialogId}
+      end
+    `
     put submitButton at the end of footer
 
     put header at the end of me

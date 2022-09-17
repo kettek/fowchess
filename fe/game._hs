@@ -18,7 +18,7 @@ behavior Game()
     game.auth()
   end
   on mutation of @game_id
-    GameUpdates.open('http://localhost:4000/stream')
+    GameUpdates.open(`http://localhost:4000/game/${@game_id}/stream?id=${localStorage.getItem('id')}`)
     -- TODO: Issue fetch for game?
     log "TODO: Some sort of game API fetch"
   end
@@ -50,9 +50,12 @@ def game.auth
 end
 
 def game.create(obj)
-  fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify(obj)
+  fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify({name: obj.name, color: obj.color, id: localStorage.getItem('id')})
   if its ok then
     game.join(its id)
+  else
+    log "failed to create game :("
+    log it
   end
   log it
   -- set #game's @game_id to "some game"
