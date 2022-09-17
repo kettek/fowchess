@@ -12,11 +12,22 @@ defmodule FogChess.HttpRouter do
 
   # Set up matching and dispatching...?
   plug :match
+  # Set up post processing?
+  plug Plug.Parsers,
+    parsers: [:urlencoded, :json],
+    json_decoder: Jason
   plug :dispatch
 
   # Send the index if the root is requested.
   get "/" do
     send_file(conn, 200, "../fe/index.html")
+  end
+
+  post "/game/create" do
+    Logger.debug(conn.body_params)
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Jason.encode!(%{"msg" => "oh snap"}))
   end
 
   get "/game/:id" do

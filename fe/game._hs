@@ -22,6 +22,8 @@ behavior Game()
 end
 
 def game.create()
+  fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify({name: "big john"})
+  log it
   set #game's @game_id to "some game"
 end
 
