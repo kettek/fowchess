@@ -45,7 +45,7 @@ defmodule FogChess.HttpRouter do
     send_resp(conn, 200, "TODO: query for game, make it if it doesn't, then send game info along with a session key for the client")
   end
 
-  get "/stream" do
+  get "/game/:id/stream" do
     conn
     |> put_resp_content_type("text/event-stream")
     |> put_resp_header("connection", "keep-alive")
