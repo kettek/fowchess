@@ -14,6 +14,9 @@ eventsource GameUpdates
 end
 
 behavior Game()
+  init
+    game.auth()
+  end
   on mutation of @game_id
     GameUpdates.open('http://localhost:4000/stream')
     -- TODO: Issue fetch for game?
@@ -21,13 +24,43 @@ behavior Game()
   end
 end
 
-def game.create()
-  fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify({name: "big john"})
+def game.showCreateDialog()
+  if no #CreateDialog then
+    make <div#CreateDialog/>
+    set its @script to 'install CreateDialog'
+    put it at the end of document.body
+    log "do soemthintg"
+  end
+end
+
+def game.auth
+  show #AuthDialog
+  log "auth"
+  set myId to localStorage.getItem('id')
+  log myId
+  if no myId then
+    fetch /auth as json with headers: {'Content-Type': 'application/json'}, method:"POST"
+    log it
+    localStorage.setItem('id', it.id)
+  else
+    fetch /auth as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify({id: myId})
+    log it
+  end
+  hide #AuthDialog
+end
+
+def game.create(obj)
+  fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify(obj)
+  if its ok then
+    game.join(its id)
+  end
   log it
-  set #game's @game_id to "some game"
+  -- set #game's @game_id to "some game"
 end
 
 def game.join(id)
+  fetch `/games/${id}`
+  log it
   -- TODO
   log "join " + id
 end

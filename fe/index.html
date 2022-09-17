@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script type='text/hyperscript' src='dialog._hs'></script>
   <script type='text/hyperscript' src='game._hs'></script>
   <script type='text/hyperscript' src='board._hs'></script>
   <script src='lib/_hyperscript/_hyperscript.min.js'></script>
@@ -12,11 +13,14 @@
   <menu>
     <button _='on click show #menu__game'>Game</button>
     <menu id='menu__game' _='init hide me end on mouseleave hide me'>
-      <button _='on click game.create()'>Create Game</button>
+      <button _='on click game.showCreateDialog()'>Create Game</button>
       <button _='on click game.join("dunno")'>Join Game</button>
       <button _='on click game.leave()'>Leave Game</button>
     </menu>
   </menu>
   <div id='game' _='install Game()'>
     <div _='install Board(width: 8, height: 8)'></div>
+  </div>
+  <div id='AuthDialog'>
+    Authorizing...
   </div>

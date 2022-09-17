@@ -1,5 +1,6 @@
 defmodule FogChess.HttpRouter do
   require Logger
+  require UUID
   use Plug.Router
 
   # Debug because I don't know what I'm doing.
@@ -23,11 +24,21 @@ defmodule FogChess.HttpRouter do
     send_file(conn, 200, "../fe/index.html")
   end
 
+  post "/auth" do
+    if Map.has_key?(conn.body_params, "id") do
+      conn
+      |> send_resp(200, Jason.encode!(%{"id" => Map.get(conn.body_params, "id"), "ok" => "my liege"}))
+    else
+      conn
+      |> send_resp(200, Jason.encode!(%{"id" => UUID.uuid4(), "ok" => "welcome to our lands"}))
+    end
+  end
+
   post "/game/create" do
     Logger.debug(conn.body_params)
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{"msg" => "oh snap"}))
+    |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!"}))
   end
 
   get "/game/:id" do
