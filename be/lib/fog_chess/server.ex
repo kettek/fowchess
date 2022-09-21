@@ -36,16 +36,20 @@ defmodule FogChess.HttpRouter do
 
   post "/game/create" do
     Logger.debug(conn.body_params)
+    uuid = UUID.uuid4()
+    FogChess.Games.put(uuid, %FogChess.Game{uuid: uuid})
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!"}))
+    |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!", "id" => uuid}))
   end
 
-  get "/game/:id" do
+  get "/games/:id" do
+    id = Map.get(conn.params, "id")
+    IO.inspect(FogChess.Games.get(id))
     send_resp(conn, 200, "TODO: query for game, make it if it doesn't, then send game info along with a session key for the client")
   end
 
-  get "/game/:id/stream" do
+  get "/games/:id/stream" do
     conn
     |> put_resp_content_type("text/event-stream")
     |> put_resp_header("connection", "keep-alive")
