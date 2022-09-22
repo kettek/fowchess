@@ -1,5 +1,9 @@
 defmodule FogChess.Cell do
   defstruct [:piece, :color]
+
+  def is_empty(cell) do
+    Map.get(cell, :piece) == nil
+  end
 end
 
 defmodule FogChess.Board do
@@ -19,9 +23,6 @@ defmodule FogChess.Board do
       end
     end
     board
-    #^board = for x <- 0..7, into: board, do: {{x, 1}, %FogChess.Cell{piece: "pawn", color: "white"}}
-    #board = for x <- 0..7, into: ^board, do: {{x, 6}, %FogChess.Cell{piece: "pawn", color: "black"}}
-    #IO.inspect(board)
   end
 end
 
@@ -91,20 +92,41 @@ defmodule FogChess.Game do
     :ok
   end
 
-  def move(pid, player_id, from, to) do
-    Agent.get(pid, fn(state) ->
-      player = Map.get(state.players, player_id)
-      case player do
-        nil ->
-          {:error, "no player"}
-        _ ->
-          with {:ok, fromCell} <- Map.fetch(state.cells, struct(FogChess.Cell, from)),
-               {:ok, toCell} <- Map.fetch(state.cells, struct(FogChess.Cell, to)),
-               {:ok, payload} <- Jason.encode(%{"from" => fromCell, "to" => toCell}) do
-            send_to_allp(state, "data: #{payload}\n\n")
+  def move(pid, _player_id, from, to) do
+    Agent.get_and_update(pid, fn(state) ->
+#      player = Map.get(state.players, player_id)
+#      case player do
+#        nil ->
+#          {:error, "no player"}
+#        _ ->
+          {from_x, from_y} = {String.to_integer(from["x"]), String.to_integer(from["y"])}
+          {to_x, to_y} = {String.to_integer(to["x"]), String.to_integer(to["y"])}
+          with {:ok, from_cell} <- get_cell(state.cells, from_x, from_y),
+               {:ok, to_cell} <- get_cell(state.cells, to_x, to_y),
+               true <- FogChess.Cell.is_empty(to_cell)
+          do
+            with {:ok, payload} <- Jason.encode(%{"from" => from, "to" => to})
+            do
+              send_to_allp(state, "event: move\ndata: #{payload}\n\n")
+              state = Map.put(state, :cells,
+                Map.put(state.cells, {from_x, from_y}, %FogChess.Cell{})
+                |> Map.put({to_x, to_y}, from_cell)
+              )
+              {:ok, state}
+            end
+          else
+            false -> {{:error, :nonempty_cell}, state}
+            {:error, :invalid_cell} -> {{:error, :invalid_cell}, state}
           end
-      end
+#      end
     end)
+  end
+
+  defp get_cell(cells, x, y) do
+    case Map.fetch(cells, {x, y}) do
+      {:ok, cell} -> {:ok, cell}
+      :error -> {:error, :invalid_cell}
+    end
   end
 
   #def check_player(pid, player_uuid) do

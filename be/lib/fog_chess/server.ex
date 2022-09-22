@@ -58,7 +58,6 @@ defmodule FogChess.HttpRouter do
   end
 
   patch "/games/:id/move" do
-    IO.inspect(conn.body_params)
     player_id = Map.get(conn.body_params, "id")
     from = Map.get(conn.body_params, "from")
     to = Map.get(conn.body_params, "to")
@@ -75,10 +74,10 @@ defmodule FogChess.HttpRouter do
             |> send_resp(200, Jason.encode!(%{"ok" => "valid"}))
           :error ->
             conn
-            |> send_resp(401, Jason.encode!(%{"nok" => "bad move"}))
+            |> send_resp(405, Jason.encode!(%{"nok" => "bad move"}))
           {:error, reason} ->
             conn
-            |> send_resp(401, Jason.encode!(%{"nok" => reason}))
+            |> send_resp(405, Jason.encode!(%{"nok" => reason}))
         end
     end
   end

@@ -35,6 +35,18 @@ behavior Board(width, height)
       end
     end
   end
+  on move from GameUpdates
+    set action to JSON.parse(event.data)
+    set from_x to action.from.x as Number
+    set from_y to action.from.y as Number
+    set to_x to action.to.x as Number
+    set to_y to action.to.y as Number
+
+    set fromCell to #{from_x + 'x' + from_y}
+    set toCell to #{to_x + 'x' + to_y}
+
+    put fromCell's children into toCell
+  end
 end
 
 behavior Piece
@@ -65,10 +77,9 @@ behavior Cell
   on drop
     -- TODO: Send move request.
     set myPiece to the first <div.Piece/> in me
-    if no myPiece
+    -- if no myPiece
       set msg to JSON.parse(event.dataTransfer.getData('from'))
       fetch `/games/${#game's @game_id}/move` as json with headers: {'Content-Type': 'application/json'}, method:"PATCH", body: JSON.stringify({id: localStorage.getItem('id'), from: {x: msg.x, y: msg.y}, to: {x: @x, y: @y}})
-      -- put #{JSON.parse(event.dataTransfer.getData('from')).id}'s children into me
-    end
+    -- end
   end
 end
