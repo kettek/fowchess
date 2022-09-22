@@ -11,6 +11,12 @@ eventsource GameUpdates
     log "got exit"
     GameUpdates.close()
   end
+
+  on error
+    log "failed to connect to game stream"
+    -- hyperscript is broken. You _cannot_ close a stream once it is opened, even if you wish to force it to (in the event the server breaks or the fetch is incorrect). Ridiculous.
+    GameUpdates.close()
+  end
 end
 
 behavior Game()
@@ -51,6 +57,7 @@ end
 
 def game.create(obj)
   fetch /game/create as json with headers: {'Content-Type': 'application/json'}, method:"POST", body: JSON.stringify({name: obj.name, color: obj.color, id: localStorage.getItem('id')})
+  log it
   if its ok then
     game.join(its id)
   else
@@ -62,7 +69,12 @@ def game.create(obj)
 end
 
 def game.join(id)
-  fetch `/games/${id}`
+  log "joining " + id
+  fetch `/games/${id}?id=${localStorage.getItem('id')}` as json
+  log it
+  if its ok then
+    GameUpdates.open(`/games/${id}/stream?id=${localStorage.getItem('id')}`)
+  end
   log it
   -- TODO
   log "join " + id
