@@ -36,7 +36,14 @@ def game.showCreateDialog()
     make <div#CreateDialog/>
     set its @script to 'install CreateDialog'
     put it at the end of document.body
-    log "do soemthintg"
+  end
+end
+
+def game.showJoinDialog()
+  if no #JoinDialog then
+    make <div#JoinDialog/>
+    set its @script to 'install JoinDialog'
+    put it at the end of document.body
   end
 end
 

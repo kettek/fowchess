@@ -47,3 +47,45 @@ behavior CreateDialog()
     put footer at the end of me
   end
 end
+
+behavior JoinDialog()
+  init
+    add .Dialog to me
+    set dialogId to my @id
+
+    make <header/> called header
+    make <section/> called section
+    make <footer/> called footer
+
+    -- header
+    put `<span>join a game</span>` into header
+    make <button.Close/> called button
+    put 'close' into button
+    set button's @script to `on click remove #${dialogId}`
+    put button at the end of header
+
+    -- content
+    put `
+      <label>
+        <span>id</span>
+        <input type='text' id='joinId'/>
+      </label>
+    ` into section
+
+    -- footer
+    make <button.Submit/> called submitButton
+    put 'join' into submitButton
+    set submitButton's @script to `
+      on click
+        game.join(#joinId's value)
+        remove #${dialogId}
+      end
+    `
+    put submitButton at the end of footer
+
+    put header at the end of me
+    put section at the end of me
+    put footer at the end of me
+
+  end
+end
