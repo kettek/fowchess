@@ -35,13 +35,12 @@ defmodule FogChess.HttpRouter do
   end
 
   post "/game/create" do
-    uuid = UUID.uuid4()
-    {:ok, pid} = FogChess.Game.start_link(%FogChess.Game{uuid: uuid})
+    {:ok, pid} = FogChess.Game.start_link(FogChess.Game.new())
     FogChess.Game.set_pid(pid)
-    FogChess.Games.put(uuid, pid)
+    FogChess.Games.put(FogChess.Game.get(pid).uuid, pid)
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!", "id" => uuid}))
+    |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!", "id" => FogChess.Game.get(pid).uuid}))
   end
 
   get "/games/:id" do
@@ -58,9 +57,30 @@ defmodule FogChess.HttpRouter do
     end
   end
 
-  put "/games/:id/move" do
-    conn
-    |> send_resp(404, Jason.encode!(%{"nok" => "invalid"}))
+  patch "/games/:id/move" do
+    IO.inspect(conn.body_params)
+    player_id = Map.get(conn.body_params, "id")
+    from = Map.get(conn.body_params, "from")
+    to = Map.get(conn.body_params, "to")
+    id = Map.get(conn.params, "id")
+    gamePid = FogChess.Games.get(id)
+    case gamePid do
+      nil ->
+        conn
+        |> send_resp(404, Jason.encode!(%{"nok" => "invalid"}))
+      _ ->
+        case FogChess.Game.move(gamePid, player_id, from, to) do
+          :ok ->
+            conn
+            |> send_resp(200, Jason.encode!(%{"ok" => "valid"}))
+          :error ->
+            conn
+            |> send_resp(401, Jason.encode!(%{"nok" => "bad move"}))
+          {:error, reason} ->
+            conn
+            |> send_resp(401, Jason.encode!(%{"nok" => reason}))
+        end
+    end
   end
 
   get "/games/:id/stream" do
@@ -80,12 +100,18 @@ defmodule FogChess.HttpRouter do
           |> send_resp(404, "invalid game")
           _ ->
           FogChess.Game.put_player(game_pid, player_uuid, player_conn)
-          conn
+          conn = conn
           |> put_resp_content_type("text/event-stream")
           |> put_resp_header("connection", "keep-alive")
           |> put_resp_header("cache-control", "no-cache")
           |> send_chunked(200)
+
+          payload = Jason.encode!(FogChess.Game.board(game_pid))
+          Plug.Conn.chunk(conn, "event: board\ndata: #{payload}\n\n")
+
+          conn
           |> stream_loop(stream_watcher(self(), game_pid, player_uuid))
+          #Plug.Conn.chunk(conn, "data: #{payload}\n\n")
       end
     end
   end
@@ -104,10 +130,9 @@ defmodule FogChess.HttpRouter do
   end
 
   defp stream_loop(conn, watcher_pid) do
-    send(watcher_pid, {:tick})
     receive do
-      {:update} ->
-        Logger.info("got update")
+      {:update, payload} ->
+        Plug.Conn.chunk(conn, payload)
         send(watcher_pid, {:tick})
         stream_loop(conn, watcher_pid)
       {:move} ->

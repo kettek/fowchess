@@ -8,26 +8,32 @@ behavior Board(width, height)
         make <td/> called cell
         set cell's @script to 'install Cell'
         set cell's id to row's children's length + 'x' + table's children's length
-
-        -- TEMP
-        if table's children's length is 3 and row's children's length is 3
-          make <div.Piece.Queen.black/> called piece
-          set piece's @draggable to true
-          set piece's @script to 'install Piece'
-          put piece at the end of cell
-        end
-        if table's children's length is 6 and row's children's length is 6
-          make <div.Piece.Queen.white/> called piece
-          set piece's @draggable to true
-          set piece's @script to 'install Piece'
-          put piece at the end of cell
-        end
-
+        set cell's @x to row's children's length
+        set cell's @y to table's children's length
         put cell at the end of row
       end
       put row at the end of table
     end
     put table into me
+  end
+  -- ehh...
+  on board from GameUpdates
+    -- clear old board
+    remove <div.Piece/>
+    -- make new board
+    set board to JSON.parse(event.data)
+    for cell in board
+      set targetCellId to cell.x + 'x' + cell.y
+      set targetCell to #{targetCellId}
+      if targetCell
+        make <div.Piece/> called piece
+        set piece's @draggable to true
+        set piece's @script to 'install Piece'
+        add .{cell.piece} to piece
+        add .{cell.color} to piece
+        put piece into targetCell
+      end
+    end
   end
 end
 
@@ -40,7 +46,7 @@ behavior Cell
     if piece then
       set event.dataTransfer.effectAllowed to 'move'
       call event.dataTransfer.setDragImage(piece, 0, 0)
-      call event.dataTransfer.setData('from', my id)
+      call event.dataTransfer.setData('from', JSON.stringify({id: my id, x: @x, y: @y}))
       -- TODO: We could target all <td/>s, then check if each would be a valid location, and if so, set '.valid', otherwise '.invalid'. These would then be cleared on dragend.
     end
   end
@@ -60,7 +66,9 @@ behavior Cell
     -- TODO: Send move request.
     set myPiece to the first <div.Piece/> in me
     if no myPiece
-      put #{event.dataTransfer.getData('from')}'s children into me
+      set msg to JSON.parse(event.dataTransfer.getData('from'))
+      fetch `/games/${#game's @game_id}/move` as json with headers: {'Content-Type': 'application/json'}, method:"PATCH", body: JSON.stringify({id: localStorage.getItem('id'), from: {x: msg.x, y: msg.y}, to: {x: @x, y: @y}})
+      -- put #{JSON.parse(event.dataTransfer.getData('from')).id}'s children into me
     end
   end
 end

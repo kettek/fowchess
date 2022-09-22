@@ -24,7 +24,8 @@ behavior Game()
     game.auth()
   end
   on mutation of @game_id
-    GameUpdates.open(`http://localhost:4000/game/${@game_id}/stream?id=${localStorage.getItem('id')}`)
+    set $game_id to @game_id
+    GameUpdates.open(`/games/${@game_id}/stream?id=${localStorage.getItem('id')}`)
     -- TODO: Issue fetch for game?
     log "TODO: Some sort of game API fetch"
   end
@@ -73,7 +74,7 @@ def game.join(id)
   fetch `/games/${id}?id=${localStorage.getItem('id')}` as json
   log it
   if its ok then
-    GameUpdates.open(`/games/${id}/stream?id=${localStorage.getItem('id')}`)
+    set #game's @game_id to id
   end
   log it
   -- TODO
