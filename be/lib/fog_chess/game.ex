@@ -70,16 +70,20 @@ defmodule FogChess.Game do
   end
 
   def put_player(pid, uuid, player_conn) do
-    Agent.update(pid, fn(value) -> %{value | players: Enum.into(value.players, %{uuid => player_conn})} end)
+    Agent.update(pid, fn(value) ->
+      Map.put(value, :players, Map.put(value.players, uuid, player_conn))
+    end)
   end
 
   def delete_player(pid, uuid) do
-    Agent.update(pid, fn(value) -> %{value | players: Map.delete(value.players, uuid) } end)
+    Agent.update(pid, fn(value) ->
+      Map.put(value, :players, Map.delete(value.players, uuid))
+    end)
   end
 
   def send_to_all(pid, payload) do
     Agent.get(pid, fn(value) ->
-      Enum.each(value.players, fn {uuid, player} ->
+      Enum.each(value.players, fn {_uuid, player} ->
         FogChess.PlayerConn.send_update(player, payload)
       end)
     end)
