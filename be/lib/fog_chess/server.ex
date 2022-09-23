@@ -88,6 +88,31 @@ defmodule FogChess.HttpRouter do
     end
   end
 
+  patch "/games/:id/untake" do
+    player_id = Map.get(conn.body_params, "id")
+    piece = Map.get(conn.body_params, "piece")
+    color = Map.get(conn.body_params, "color")
+    to = Map.get(conn.body_params, "to")
+    gamePid = FogChess.Games.get(id)
+    case gamePid do
+      nil ->
+        conn
+        |> send_resp(404, Jason.encode!(%{"nok" => "invalid"}))
+      _ ->
+        case FogChess.Game.untake(gamePid, player_id, to, piece, color) do
+          :ok ->
+            conn
+            |> send_resp(200, Jason.encode!(%{"ok" => "valid"}))
+          :error ->
+            conn
+            |> send_resp(405, Jason.encode!(%{"nok" => "bad untake"}))
+          {:error, reason} ->
+            conn
+            |> send_resp(405, Jason.encode!(%{"nok" => reason}))
+        end
+    end
+  end
+
   get "/games/:id/stream" do
     player_uuid = Map.get(conn.query_params, "id")
     if player_uuid == nil do
