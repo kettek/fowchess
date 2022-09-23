@@ -47,6 +47,19 @@ behavior Board(width, height)
 
     put fromCell's children into toCell
   end
+  on take from GameUpdates
+    set action to JSON.parse(event.data)
+    set from_x to action.from.x as Number
+    set from_y to action.from.y as Number
+    set to_x to action.to.x as Number
+    set to_y to action.to.y as Number
+
+    set fromCell to #{from_x + 'x' + from_y}
+    set toCell to #{to_x + 'x' + to_y}
+
+    put toCell's children at the end of #tray
+    put fromCell's children into toCell
+  end
 end
 
 behavior Piece

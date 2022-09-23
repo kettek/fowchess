@@ -4,6 +4,7 @@
   <script type='text/hyperscript' src='dialog._hs'></script>
   <script type='text/hyperscript' src='game._hs'></script>
   <script type='text/hyperscript' src='board._hs'></script>
+  <script type='text/hyperscript' src='tray._hs'></script>
   <script src='lib/_hyperscript/_hyperscript.min.js'></script>
   <script src='lib/_hyperscript/eventsource.js'></script>
 
@@ -20,6 +21,8 @@
   </menu>
   <div id='game' _='install Game()'>
     <div _='install Board(width: 8, height: 8)'></div>
+  </div>
+  <div id='tray' _='install Tray()'>
   </div>
   <div id='sidebar'>
     <div id='tabs'>
