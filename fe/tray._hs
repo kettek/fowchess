@@ -9,7 +9,14 @@ behavior Tray
       add .{trayPiece.color} to piece
       set piece's @data-piece to trayPiece.piece
       set piece's @data-color to trayPiece.color
-      put piece at the end of me
+
+      if the trayPiece's color is 'black' and my id is 'leftTray' then
+        put piece at the end of me
+      else
+        if the trayPiece's color is 'white' and my id is 'rightTray' then
+          put piece at the end of me
+        end
+      end
     end
   end
 

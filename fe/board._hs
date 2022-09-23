@@ -60,18 +60,21 @@ behavior Board(width, height)
     set fromCell to #{from_x + 'x' + from_y}
     set toCell to #{to_x + 'x' + to_y}
 
-    put toCell's children at the end of #tray
+    set piece to the first children of toCell
+    if the piece's @data-color is 'black' then
+      put toCell's children at the end of #leftTray
+    else
+      put toCell's children at the end of #rightTray
+    end
     put fromCell's children into toCell
   end
 end
 
 behavior Piece
   on dragstart(clientX, clientY)
-    log event
     set event.dataTransfer.effectAllowed to 'move'
     call event.dataTransfer.setDragImage(me, 0, 0)
     call event.dataTransfer.setData('untake', JSON.stringify({id: my id, piece: @data-piece, color: @data-color}))
-    log me
   end
 end
 

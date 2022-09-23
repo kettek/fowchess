@@ -26,14 +26,19 @@ body {
 
 #game {
   grid-area: game;
-  display: flex;
   padding: 4em 0 0 4em;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
-#tray {
+#leftTray, #rightTray {
   display: flex;
   flex-direction: column;
   margin: 0 2em;
+  min-width: @fontSize;
+}
+#rightTray {
+  flex-direction: column-reverse;
 }
 
 #sidebar {
