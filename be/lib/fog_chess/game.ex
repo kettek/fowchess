@@ -61,7 +61,9 @@ defmodule FogChess.Tray do
 
   def remove_piece(tray, piece, color) do
     if get_piece(tray, piece, color) do
-      Enum.filter(tray, fn p -> p.piece == piece && p.color == color end)
+      List.delete_at(tray,
+        Enum.find_index(tray, fn p -> p.piece == piece && p.color == color end)
+      )
     else
       tray
     end
