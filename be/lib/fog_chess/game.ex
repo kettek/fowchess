@@ -10,14 +10,30 @@ defmodule FogChess.Board do
   def make_chess() do
     board = for x <- 0..7, y <- 0..7, into: %{} do
       cond do
-        y == 0 && (x == 7 || x == 0) ->
-          {{x, y}, %FogChess.Cell{piece: "Rook", color: "white"}}
         y == 1 ->
           {{x, y}, %FogChess.Cell{piece: "Pawn", color: "white"}}
+        y == 0 && (x == 7 || x == 0) ->
+          {{x, y}, %FogChess.Cell{piece: "Rook", color: "white"}}
+        y == 0 && (x == 6 || x == 1) ->
+          {{x, y}, %FogChess.Cell{piece: "Knight", color: "white"}}
+        y == 0 && (x == 5 || x == 2) ->
+          {{x, y}, %FogChess.Cell{piece: "Bishop", color: "white"}}
+        y == 0 && x == 4 ->
+          {{x, y}, %FogChess.Cell{piece: "Queen", color: "white"}}
+        y == 0 && x == 3 ->
+          {{x, y}, %FogChess.Cell{piece: "King", color: "white"}}
         y == 6 ->
           {{x, y}, %FogChess.Cell{piece: "Pawn", color: "black"}}
         y == 7 && (x == 7 || x == 0) ->
           {{x, y}, %FogChess.Cell{piece: "Rook", color: "black"}}
+        y == 7 && (x == 6 || x == 1) ->
+          {{x, y}, %FogChess.Cell{piece: "Knight", color: "black"}}
+        y == 7 && (x == 5 || x == 2) ->
+          {{x, y}, %FogChess.Cell{piece: "Bishop", color: "black"}}
+        y == 7 && x == 4 ->
+          {{x, y}, %FogChess.Cell{piece: "Queen", color: "black"}}
+        y == 7 && x == 3 ->
+          {{x, y}, %FogChess.Cell{piece: "King", color: "black"}}
         true ->
           {{x, y}, %FogChess.Cell{}}
       end
