@@ -1,12 +1,12 @@
 behavior Tray
   on tray from GameUpdates
     set pieces to JSON.parse(event.data)
-    for piece in pieces
+    for trayPiece in pieces
       make <div.Piece/> called piece
       set piece's @draggable to true
       set piece's @script to 'install Piece'
-      add .{cell.piece} to piece
-      add .{cell.color} to piece
+      add .{trayPiece.piece} to piece
+      add .{trayPiece.color} to piece
       put piece at the end of me
     end
   end

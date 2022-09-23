@@ -104,6 +104,12 @@ defmodule FogChess.Game do
     end)
   end
 
+  def tray(pid) do
+     Agent.get(pid, fn(state) ->
+      Enum.map(state.tray, fn piece -> Map.from_struct(piece) end)
+    end)
+  end
+
   def put_player(pid, uuid, player_pid) do
     Agent.update(pid, fn(state) ->
       case Map.get(state.players, uuid) do

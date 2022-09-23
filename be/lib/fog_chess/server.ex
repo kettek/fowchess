@@ -133,8 +133,13 @@ defmodule FogChess.HttpRouter do
           |> put_resp_header("cache-control", "no-cache")
           |> send_chunked(200)
 
+          # Send the initial board
           payload = Jason.encode!(FogChess.Game.board(game_pid))
           Plug.Conn.chunk(conn, "event: board\ndata: #{payload}\n\n")
+
+          # Also send the tray
+          payload = Jason.encode!(FogChess.Game.tray(game_pid))
+          Plug.Conn.chunk(conn, "event: tray\ndata: #{payload}\n\n")
 
           conn
           |> stream_loop(stream_watcher(self(), game_pid, player_uuid))
