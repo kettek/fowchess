@@ -3,6 +3,7 @@
 @pieceStrokeColor: #fff;
 @borderColor: #777;
 @cellSize: 4rem;
+@fontSize: 3rem;
 
 * {
   user-select: none;
@@ -47,8 +48,7 @@ menu {
       width: @cellSize;
       height: @cellSize;
       text-align: center;
-      text-shadow: -2px -2px 0 @pieceStrokeColor,  2px -2px 0 @pieceStrokeColor, -2px 2px 0 @pieceStrokeColor, 2px 2px 0 @pieceStrokeColor;
-      font-size: @cellSize;
+      font-size: @fontSize;
       position: relative;
       line-height: 1.2em;
     }
@@ -74,9 +74,9 @@ menu {
 
 .Piece {
   display: inline-block;
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: relative;
+  font-size: @fontSize;
+  text-shadow: -2px -2px 0 @pieceStrokeColor,  2px -2px 0 @pieceStrokeColor, -2px 2px 0 @pieceStrokeColor, 2px 2px 0 @pieceStrokeColor;
 }
 .Piece::after {
   position: relative;
