@@ -40,10 +40,11 @@ end
 defmodule FogChess.Game do
   use Agent
 
-  defstruct [:uuid, :pid, cells: %{}, players: %{}, turn: :white]
+  defstruct [:uuid, :pid, :name, cells: %{}, players: %{}, turn: :white]
 
   def new() do
     %FogChess.Game{
+      name: "",
       uuid: UUID.uuid4(),
       cells: FogChess.Board.make_chess(),
     }

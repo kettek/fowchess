@@ -19,6 +19,10 @@ defmodule FogChess.Games do
     GenServer.call(:games, {:delete, uuid})
   end
 
+  def list() do
+    GenServer.call(:games, {:list})
+  end
+
   # Server
 
   @impl true
@@ -39,5 +43,10 @@ defmodule FogChess.Games do
   @impl true
   def handle_call({:delete, uuid}, _from, state) do
     {:reply, :ok, Map.pop(state, uuid)}
+  end
+
+  @impl true
+  def handle_call({:list}, _from, state) do
+    {:reply, Enum.map(state, fn {uuid, game_pid} -> %{name: FogChess.Game.get(game_pid).name, uuid: uuid} end), state}
   end
 end

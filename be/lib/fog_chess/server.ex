@@ -43,6 +43,12 @@ defmodule FogChess.HttpRouter do
     |> send_resp(200, Jason.encode!(%{"ok" => "a new kingdom!", "id" => FogChess.Game.get(pid).uuid}))
   end
 
+  get "/game/list" do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Jason.encode!(FogChess.Games.list()))
+  end
+
   get "/games/:id" do
     id = Map.get(conn.params, "id")
     gamePid = FogChess.Games.get(id)
