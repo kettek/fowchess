@@ -32,6 +32,8 @@ behavior Board(width, height)
         set piece's @script to 'install Piece'
         add .{cell.piece} to piece
         add .{cell.color} to piece
+        set piece's @data-piece to cell.piece
+        set piece's @data-color to cell.color
         put piece into targetCell
       end
     end
@@ -64,6 +66,13 @@ behavior Board(width, height)
 end
 
 behavior Piece
+  on dragstart(clientX, clientY)
+    log event
+    set event.dataTransfer.effectAllowed to 'move'
+    call event.dataTransfer.setDragImage(me, 0, 0)
+    call event.dataTransfer.setData('untake', JSON.stringify({id: my id, piece: @data-piece, color: @data-color}))
+    log me
+  end
 end
 
 behavior Cell
@@ -89,11 +98,15 @@ behavior Cell
     remove .targetTile
   end
   on drop
-    -- TODO: Send move request.
     set myPiece to the first <div.Piece/> in me
-    -- if no myPiece
+    if event.dataTransfer.getData('from') then
       set msg to JSON.parse(event.dataTransfer.getData('from'))
       fetch `/games/${#game's @game_id}/move` as json with headers: {'Content-Type': 'application/json'}, method:"PATCH", body: JSON.stringify({id: localStorage.getItem('id'), from: {x: msg.x, y: msg.y}, to: {x: @x, y: @y}})
-    -- end
+    else
+      if event.dataTransfer.getData('untake') then
+      set msg to JSON.parse(event.dataTransfer.getData('untake'))
+      fetch `/games/${#game's @game_id}/untake` as json with headers: {'Content-Type': 'application/json'}, method:"PATCH", body: JSON.stringify({id: localStorage.getItem('id'), piece: msg.piece, color: msg.color, to: {x: @x, y: @y}})
+      end
+    end
   end
 end

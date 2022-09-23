@@ -7,16 +7,17 @@ behavior Tray
       set piece's @script to 'install Piece'
       add .{trayPiece.piece} to piece
       add .{trayPiece.color} to piece
+      set piece's @data-piece to trayPiece.piece
+      set piece's @data-color to trayPiece.color
       put piece at the end of me
     end
   end
 
-  on take from GameUpdates
-    set piece to JSON.parse(event.data)
-    log piece
-  end
   on untake from GameUpdates
-    set piece to JSON.parse(event.data)
-    log piece
+    set action to JSON.parse(event.data)
+    set viablePiece to first .{action.piece+'.'+action.color} in me
+    if viablePiece then
+      put viablePiece into #{action.to.x+'x'+action.to.y}
+    end
   end
 end
