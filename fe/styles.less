@@ -8,6 +8,27 @@
   user-select: none;
 }
 
+body {
+  display: grid;
+  grid-template-areas:
+    "menu menu menu"
+    "game game side"
+    "game game side"
+  ;
+}
+
+#game {
+  grid-area: game;
+}
+
+#sidebar {
+  grid-area: side;
+}
+
+menu {
+  grid-area: menu;
+}
+
 .Board {
   tr {
     td {

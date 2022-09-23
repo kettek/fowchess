@@ -21,6 +21,20 @@
   <div id='game' _='install Game()'>
     <div _='install Board(width: 8, height: 8)'></div>
   </div>
+  <div id='sidebar'>
+    <div id='tabs'>
+      <button _='on click show <section/> in #tabsContent when its id is "gameslist"'>Games</button>
+      <button _='on click show <section/> in #tabsContent when its id is "chat"'>Chat</button>
+    </div>
+    <div id='tabsContent'>
+      <section id='gameslist'>
+        TODO: list of games
+      </section>
+      <section id='chat' _="init hide">
+        TODO: chat for current game?
+      </section>
+    </div>
+  </div>
   <div id='AuthDialog'>
     Authorizing...
   </div>
