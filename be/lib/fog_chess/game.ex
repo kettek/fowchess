@@ -220,7 +220,7 @@ defmodule FogChess.Game do
   end
 
   defp take_(state, from, from_cell, to, to_cell) do
-    if FogChess.Cell.is_empty(to_cell) do
+    if FogChess.Cell.is_empty(to_cell) || from_cell.color == to_cell.color do
       IO.puts("no take_")
       {:nok, state}
     else
