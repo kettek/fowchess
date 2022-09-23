@@ -54,16 +54,16 @@ defmodule FogChess.Game do
   end
 
   def set_pid(pid) do
-    Agent.update(pid, fn(value) -> %{value | pid: pid} end)
+    Agent.update(pid, fn(state) -> %{state | pid: pid} end)
   end
 
   def get(pid) do
-    Agent.get(pid, fn(value) -> value end)
+    Agent.get(pid, fn(state) -> state end)
   end
 
   def board(pid) do
-    Agent.get(pid, fn(value) ->
-      value.cells
+    Agent.get(pid, fn(state) ->
+      state.cells
       |> Enum.filter(fn {_, v} -> v.piece != nil end)
       |> Enum.map(fn({{x, y}, cell}) ->
         Map.merge(%{x: x, y: y}, Map.from_struct(cell))
@@ -72,27 +72,28 @@ defmodule FogChess.Game do
   end
 
   def put_player(pid, uuid, player_pid) do
-    Agent.update(pid, fn(value) ->
-      case Map.get(value.players, uuid) do
-        nil -> Map.put(value, :players, Map.put(value.players, uuid, %FogChess.PlayerConn{pids: [player_pid]}))
-        conn -> Map.put(value, :players, Map.put(value.players, uuid, %FogChess.PlayerConn{conn | pids: [player_pid | conn.pids]}))
+    Agent.update(pid, fn(state) ->
+      case Map.get(state.players, uuid) do
+        nil -> Map.put(state, :players, Map.put(state.players, uuid, %FogChess.PlayerConn{pids: [player_pid]}))
+        player -> Map.put(state, :players, Map.put(state.players, uuid, %FogChess.PlayerConn{player | pids: [player_pid | player.pids]}))
       end
     end)
   end
 
+  @spec delete_player(atom | pid | {atom, any} | {:via, atom, any}, any, any) :: :ok
   def delete_player(pid, uuid, player_pid) do
-    Agent.update(pid, fn(value) ->
-      case Map.get(value.players, uuid) do
-        nil -> value
-        conn when length(conn.pids) == 1 -> Map.put(value, :players, Map.delete(value.players, uuid))
-        conn -> Map.put(value, :players, Map.put(value.players, uuid, %FogChess.PlayerConn{ conn | pids: Enum.filter(conn.pids, fn p -> p != player_pid end)}))
+    Agent.update(pid, fn(state) ->
+      case Map.get(state.players, uuid) do
+        nil -> state
+        player when length(player.pids) == 1 -> Map.put(state, :players, Map.delete(state.players, uuid))
+        player -> Map.put(state, :players, Map.put(state.players, uuid, %FogChess.PlayerConn{ player | pids: Enum.filter(player.pids, fn p -> p != player_pid end)}))
       end
     end)
   end
 
   def send_to_all(pid, payload) do
-    Agent.get(pid, fn(value) ->
-      Enum.each(value.players, fn {_uuid, player} ->
+    Agent.get(pid, fn(state) ->
+      Enum.each(state.players, fn {_uuid, player} ->
         FogChess.PlayerConn.send_update(player, payload)
       end)
     end)
