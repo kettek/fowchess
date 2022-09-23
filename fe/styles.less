@@ -44,6 +44,17 @@ menu {
   grid-area: menu;
 }
 
+.Board.perspective {
+  perspective: 100vw;
+  table {
+    transform: rotateX(5deg);
+    transition: transform 500ms;
+  }
+  table:hover {
+    transform: rotateX(0deg);
+  }
+}
+
 .Board {
   table {
     box-shadow: 0 0 4em #777;

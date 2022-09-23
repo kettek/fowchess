@@ -1,6 +1,7 @@
 behavior Board(width, height)
   init
     add .Board
+    add .perspective
     make <table.board/> called table
     repeat height times
       make <tr/> called row
