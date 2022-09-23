@@ -84,7 +84,7 @@ defmodule FogChess.Game do
     Agent.update(pid, fn(value) ->
       case Map.get(value.players, uuid) do
         nil -> value
-        conn when length(conn.players) == 1 -> Map.put(value, :players, Map.delete(value.players, uuid))
+        conn when length(conn.pids) == 1 -> Map.put(value, :players, Map.delete(value.players, uuid))
         conn -> Map.put(value, :players, Map.put(value.players, uuid, %FogChess.PlayerConn{ conn | pids: Enum.filter(conn.pids, fn p -> p != player_pid end)}))
       end
     end)
