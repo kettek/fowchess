@@ -1,6 +1,7 @@
 @whiteTileBackground: #fff;
 @blackTileBackground: #000;
-@pieceStrokeColor: #fff;
+@whiteStrokeColor: #fff;
+@blackStrokeColor: #bbb;
 @borderColor: #777;
 @cellSize: 4rem;
 @fontSize: 3rem;
@@ -25,6 +26,14 @@ body {
 
 #game {
   grid-area: game;
+  display: flex;
+  padding: 4em 0 0 4em;
+}
+
+#tray {
+  display: flex;
+  flex-direction: column;
+  margin: 0 2em;
 }
 
 #sidebar {
@@ -36,8 +45,6 @@ menu {
 }
 
 .Board {
-  padding: 4em;
-
   table {
     box-shadow: 0 0 4em #777;
   }
@@ -76,7 +83,12 @@ menu {
   display: inline-block;
   position: relative;
   font-size: @fontSize;
-  text-shadow: -2px -2px 0 @pieceStrokeColor,  2px -2px 0 @pieceStrokeColor, -2px 2px 0 @pieceStrokeColor, 2px 2px 0 @pieceStrokeColor;
+}
+.Piece.black {
+  text-shadow: -1px -1px 0 @blackStrokeColor,  1px -1px 0 @blackStrokeColor, -1px 1px 0 @blackStrokeColor, 1px 1px 0 @blackStrokeColor, -2px -2px 0 @blackStrokeColor,  2px -2px 0 @blackStrokeColor, -2px 2px 0 @blackStrokeColor, 2px 2px 0 @blackStrokeColor, -3px -3px 0 @blackStrokeColor,  3px -3px 0 @blackStrokeColor, -3px 3px 0 @blackStrokeColor, 3px 3px 0 @blackStrokeColor
+}
+.Piece.white {
+  text-shadow: -1px -1px 0 @whiteStrokeColor,  1px -1px 0 @whiteStrokeColor, -1px 1px 0 @whiteStrokeColor, 1px 1px 0 @whiteStrokeColor, -2px -2px 0 @whiteStrokeColor,  2px -2px 0 @whiteStrokeColor, -2px 2px 0 @whiteStrokeColor, 2px 2px 0 @whiteStrokeColor, -3px -3px 0 @whiteStrokeColor,  3px -3px 0 @whiteStrokeColor, -3px 3px 0 @whiteStrokeColor, 3px 3px 0 @whiteStrokeColor
 }
 .Piece::after {
   position: relative;
