@@ -83,9 +83,6 @@ defmodule FogChess.HttpRouter do
   end
 
   get "/games/:id/stream" do
-    player_conn = %FogChess.PlayerConn{
-      conn_pid: self(),
-    }
     player_uuid = Map.get(conn.query_params, "id")
     if player_uuid == nil do
       conn
@@ -98,7 +95,7 @@ defmodule FogChess.HttpRouter do
           conn
           |> send_resp(404, "invalid game")
           _ ->
-          FogChess.Game.put_player(game_pid, player_uuid, player_conn)
+          FogChess.Game.put_player(game_pid, player_uuid, self())
           conn = conn
           |> put_resp_content_type("text/event-stream")
           |> put_resp_header("connection", "keep-alive")
@@ -124,7 +121,7 @@ defmodule FogChess.HttpRouter do
       {:tick} ->
         stream_watcher_loop(target, game_pid, player_uuid)
       after 2_000 ->
-        FogChess.Game.delete_player(game_pid, player_uuid)
+        FogChess.Game.delete_player(game_pid, player_uuid, target)
     end
   end
 
