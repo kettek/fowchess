@@ -15,10 +15,13 @@
 
 body {
   display: grid;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
   grid-template-areas:
     "menu menu menu"
-    "game game side"
-    "game game side"
+    "game game game"
+    "game game game"
   ;
   background: #000;
 }
@@ -29,8 +32,9 @@ body {
 
 #game {
   grid-area: game;
-  padding: 4em 0 0 4em;
+  padding: 4em 0;
   display: flex;
+  justify-content: center;
 }
 
 #leftTray, #rightTray {
