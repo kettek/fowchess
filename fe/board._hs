@@ -65,6 +65,7 @@ behavior Board(width, height)
     set toCell to #{to_x + 'x' + to_y}
 
     put fromCell's children into toCell
+    play "sfx/move.wav"
   end
   on take from GameUpdates
     set action to JSON.parse(event.data)
