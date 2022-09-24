@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script type='text/javascript'>
+  // Silly function since hyperscript cannot fathom "%" or "&", even in inline js calls.
+  function isOdd(n) {
+    return n % 2
+  }
+  </script>
   <script type='text/hyperscript' src='dialog._hs'></script>
   <script type='text/hyperscript' src='game._hs'></script>
   <script type='text/hyperscript' src='board._hs'></script>
