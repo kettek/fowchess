@@ -226,7 +226,9 @@ defmodule FogChess.Game do
            false <- FogChess.Cell.is_empty(from_cell) do
         with {:ok, payload} <- Jason.encode(%{"from" => from}) do
           send_to_allp(state, "event: take\ndata: #{payload}\n\n")
-          {:ok, state |> Map.put(:tray, [from_cell | state.tray]) |> Map.put(:cells, Map.put(state.cells, from, %FogChess.Cell{}))}
+          state = Map.put(state, :tray, [from_cell | state.tray])
+            |> Map.put(:cells, Map.put(state.cells, {from_x, from_y}, %FogChess.Cell{}))
+          {:ok, state}
         end
       else
         true -> {{:error, :empty_cell}, state}
