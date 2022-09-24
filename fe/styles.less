@@ -3,8 +3,11 @@
 @whiteStrokeColor: #fff;
 @blackStrokeColor: #bbb;
 @borderColor: #777;
-@cellSize: 4rem;
 @fontSize: 3rem;
+
+:root {
+  --cellSize: 4em;
+}
 
 * {
   user-select: none;
@@ -27,8 +30,7 @@ body {
 #game {
   grid-area: game;
   padding: 4em 0 0 4em;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
 }
 
 #leftTray, #rightTray {
@@ -51,20 +53,24 @@ menu {
 
 .Board.perspective {
   perspective: 100vw;
-  table {
+  .cells {
     transform: rotateX(5deg);
     transition: transform 500ms;
   }
-  table:hover {
+  .cells:hover {
     transform: rotateX(0deg);
   }
 }
 
 .Board {
-  table {
+  .cells {
+    display: grid;
+  }
+
+  .cells {
     box-shadow: 0 0 4em #777;
   }
-  table::after {
+  .cells::after {
     content: ' ';
     display: block;
     position: absolute;
@@ -79,54 +85,52 @@ menu {
     );
   }
 
-  tr {
-    td {
-      border: 1px solid @borderColor;
-      width: @cellSize;
-      height: @cellSize;
-      text-align: center;
-      font-size: @fontSize;
-      position: relative;
-      line-height: 1.2em;
-    }
-    td::before {
-    content: ' ';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      background: radial-gradient(
-      circle at 20% 20%,
-      rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0)
-      );
-    }
-    td:nth-child(even) {
-      background: @whiteTileBackground;
-    }
-    td:nth-child(odd) {
-      background: @blackTileBackground;
-    }
-    td.targetTile {
-      border: 1px dashed red;
-    }
+  .cell {
+    border: 1px solid @borderColor;
+    overflow: hidden;
+    text-align: center;
+    font-size: @fontSize;
+    position: relative;
+    line-height: 1.2em;
   }
-  tr:nth-child(odd) {
-    td:nth-child(odd) {
-      background: @whiteTileBackground;
-    }
-    td:nth-child(even) {
-      background: @blackTileBackground;
-    }
+  .cell::before {
+  content: ' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(
+    circle at 20% 20%,
+    rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0)
+    );
   }
+  .cell.white {
+    background: @whiteTileBackground;
+  }
+  .cell.black {
+    background: @blackTileBackground;
+  }
+  .cell.targetTile {
+    border: 1px dashed red;
+  }
+}
+
+.cell:hover .Piece {
+  font-size: calc(@fontSize * 1.2);
+}
+
+.Piece.held {
+  // font-size: calc(@fontSize * 3) !important;
 }
 
 .Piece {
   display: inline-block;
   position: relative;
   font-size: @fontSize;
+  transition: transform 100ms, font-size 100ms;
 }
 .Piece.black {
   text-shadow: -1px -1px 0 @blackStrokeColor,  1px -1px 0 @blackStrokeColor, -1px 1px 0 @blackStrokeColor, 1px 1px 0 @blackStrokeColor, -2px -2px 0 @blackStrokeColor,  2px -2px 0 @blackStrokeColor, -2px 2px 0 @blackStrokeColor, 2px 2px 0 @blackStrokeColor, -3px -3px 0 @blackStrokeColor,  3px -3px 0 @blackStrokeColor, -3px 3px 0 @blackStrokeColor, 3px 3px 0 @blackStrokeColor

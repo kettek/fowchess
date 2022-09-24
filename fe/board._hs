@@ -2,18 +2,34 @@ behavior Board(width, height)
   init
     add .Board
     add .perspective
-    make <table.board/> called table
+    make <div.cells/> called table
+    set table's style to `grid-template-rows: repeat(${height}, var(--cellSize)); grid-template-columns: repeat(${width}, var(--cellSize))`
+    set y to 0
     repeat height times
-      make <tr/> called row
+      set x to 0
       repeat width times
-        make <td/> called cell
+        make <div.cell/> called cell
+        if isOdd(y) then
+          if isOdd(x) then
+            add .white to cell
+          else
+            add .black to cell
+          end
+        else
+          if isOdd(x) then
+            add .black to cell
+          else
+            add .white to cell
+          end
+        end
         set cell's @script to 'install Cell'
-        set cell's id to row's children's length + 'x' + table's children's length
-        set cell's @x to row's children's length
-        set cell's @y to table's children's length
-        put cell at the end of row
+        set cell's id to x + 'x' + y
+        set cell's @x to x
+        set cell's @y to y
+        put cell at the end of table
+        set x to x+1
       end
-      put row at the end of table
+      set y to y+1
     end
     put table into me
   end
@@ -82,11 +98,15 @@ behavior Cell
   on dragstart(clientX, clientY)
     set piece to the first <div.Piece/> in me
     if piece then
+      add .held to piece
       set event.dataTransfer.effectAllowed to 'move'
       call event.dataTransfer.setDragImage(piece, 0, 0)
       call event.dataTransfer.setData('from', JSON.stringify({id: my id, x: @x, y: @y}))
       -- TODO: We could target all <td/>s, then check if each would be a valid location, and if so, set '.valid', otherwise '.invalid'. These would then be cleared on dragend.
     end
+  end
+  on dragend
+    remove .held from event.originalTarget
   end
   on dragenter
     halt the event
