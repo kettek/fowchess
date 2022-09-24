@@ -27,4 +27,22 @@ behavior Tray
       put viablePiece into #{action.to.x+'x'+action.to.y}
     end
   end
+
+  on dragenter
+    halt the event
+  end
+  on dragover
+    halt the event
+    set event.dataTransfer.dropEffect to 'move'
+    add .targetTile
+  end
+  on dragleave or drop
+    remove .targetTile
+  end
+  on drop
+    if event.dataTransfer.getData('from') then
+      set msg to JSON.parse(event.dataTransfer.getData('from'))
+      fetch `/games/${#game's @game_id}/tray` as json with headers: {'Content-Type': 'application/json'}, method:"PATCH", body: JSON.stringify({id: localStorage.getItem('id'), from: {x: msg.x, y: msg.y}})
+    end
+  end
 end

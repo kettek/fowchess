@@ -219,6 +219,22 @@ defmodule FogChess.Game do
     end)
   end
 
+  def tray(pid, _player_id, from) do
+    Agent.get_and_update(pid, fn(state) ->
+      {from_x, from_y} = {String.to_integer(from["x"]), String.to_integer(from["y"])}
+      with {:ok, from_cell} <- get_cell(state.cells, from_x, from_y),
+           false <- FogChess.Cell.is_empty(from_cell) do
+        with {:ok, payload} <- Jason.encode(%{"from" => from}) do
+          send_to_allp(state, "event: take\ndata: #{payload}\n\n")
+          {:ok, state |> Map.put(:tray, [from_cell | state.tray]) |> Map.put(:cells, Map.put(state.cells, from, %FogChess.Cell{}))}
+        end
+      else
+        true -> {{:error, :empty_cell}, state}
+        {:error, :invalid_cell} -> {{:error, :invalid_cell}, state}
+      end
+    end)
+  end
+
   defp take_(state, from, from_cell, to, to_cell) do
     if FogChess.Cell.is_empty(to_cell) || from_cell.color == to_cell.color do
       IO.puts("no take_")

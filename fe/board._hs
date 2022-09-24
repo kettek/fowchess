@@ -70,19 +70,30 @@ behavior Board(width, height)
     set action to JSON.parse(event.data)
     set from_x to action.from.x as Number
     set from_y to action.from.y as Number
-    set to_x to action.to.x as Number
-    set to_y to action.to.y as Number
 
     set fromCell to #{from_x + 'x' + from_y}
-    set toCell to #{to_x + 'x' + to_y}
 
-    set piece to the first children of toCell
-    if the piece's @data-color is 'black' then
-      put toCell's children at the end of #leftTray
+    if action.to then
+      set to_x to action.to.x as Number
+      set to_y to action.to.y as Number
+
+      set toCell to #{to_x + 'x' + to_y}
+
+      set piece to the first children of toCell
+      if the piece's @data-color is 'black' then
+        put toCell's children at the end of #leftTray
+      else
+        put toCell's children at the end of #rightTray
+      end
+      put fromCell's children into toCell
     else
-      put toCell's children at the end of #rightTray
+      set piece to the first children of fromCell
+      if the piece's @data-color is 'black' then
+        put fromCell's children at the end of #leftTray
+      else
+        put fromCell's children at the end of #rightTray
+      end
     end
-    put fromCell's children into toCell
   end
 end
 

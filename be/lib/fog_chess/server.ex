@@ -88,6 +88,29 @@ defmodule FogChess.HttpRouter do
     end
   end
 
+  patch "/games/:id/tray" do
+    player_id = Map.get(conn.body_params, "id")
+    from = Map.get(conn.body_params, "from")
+    gamePid = FogChess.Games.get(id)
+    case gamePid do
+      nil ->
+        conn
+        |> send_resp(404, Jason.encode!(%{"nok" => "invalid"}))
+      _ ->
+        case FogChess.Game.tray(gamePid, player_id, from) do
+          :ok ->
+            conn
+            |> send_resp(200, Jason.encode!(%{"ok" => "valid"}))
+          :error ->
+            conn
+            |> send_resp(405, Jason.encode!(%{"nok" => "bad tray"}))
+          {:error, reason} ->
+            conn
+            |> send_resp(405, Jason.encode!(%{"nok" => reason}))
+        end
+    end
+  end
+
   patch "/games/:id/untake" do
     player_id = Map.get(conn.body_params, "id")
     piece = Map.get(conn.body_params, "piece")
