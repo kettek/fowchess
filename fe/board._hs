@@ -1,7 +1,6 @@
 behavior Board(width, height)
   init
     add .Board
-    add .perspective
     make <div.cells/> called table
     set table's style to `grid-template-rows: repeat(${height}, var(--cellSize)); grid-template-columns: repeat(${width}, var(--cellSize))`
     set y to 0

@@ -32,19 +32,41 @@ body {
 
 #game {
   grid-area: game;
-  padding: 4em 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  align-content: center;
   justify-content: center;
 }
 
 #leftTray, #rightTray {
+  position: relative;
   display: flex;
   flex-direction: column;
   margin: 0 2em;
-  min-width: @fontSize;
+  width: var(--cellSize);
+  box-shadow: 0 0 1em #777;
+  align-items: center;
+}
+#leftTray::after, #rightTray::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(
+  circle at 20% 20%,
+  rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)
+  );
 }
 #rightTray {
   flex-direction: column-reverse;
+  background: @blackTileBackground;
+}
+#leftTray {
+  background: @whiteTileBackground;
 }
 
 #sidebar {
@@ -55,14 +77,18 @@ menu {
   grid-area: menu;
 }
 
-.Board.perspective {
+#game.perspective:hover {
+  .Board, #leftTray, #rightTray {
+    transform: rotateX(0deg);
+  }
+}
+
+#game.perspective {
   perspective: 100vw;
-  .cells {
+
+  .Board, #leftTray, #rightTray {
     transform: rotateX(5deg);
     transition: transform 500ms;
-  }
-  .cells:hover {
-    transform: rotateX(0deg);
   }
 }
 

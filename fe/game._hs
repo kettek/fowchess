@@ -21,6 +21,7 @@ end
 
 behavior Game()
   init
+    add .perspective
     game.auth()
   end
   on mutation of @game_id
